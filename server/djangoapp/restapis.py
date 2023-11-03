@@ -6,6 +6,7 @@ from requests.auth import HTTPBasicAuth
 
 URL_GET_DEALERS = "https://us-south.functions.appdomain.cloud/api/v1/web/4e4780ac-8a49-40a5-afa4-6f38d2228df1/dealership-package/get-dealership"
 URL_GET_REVIEWS = "https://us-south.functions.appdomain.cloud/api/v1/web/4e4780ac-8a49-40a5-afa4-6f38d2228df1/dealership-package/get-review"
+URL_POST_REVIEW = "https://us-south.functions.appdomain.cloud/api/v1/web/4e4780ac-8a49-40a5-afa4-6f38d2228df1/dealership-package/get-review"
 
 def get_request(url, params):
     response = requests.get(url, params=params, headers={'Content-Type': 'application/json'})
@@ -94,6 +95,10 @@ def get_reviews(params):
             formatted_result.append(dealer)
     #print(len(result))
     return formatted_result
+
+def post_review(params, payload):
+    result = post_request(url=URL_POST_REVIEW, params=params, payload=payload)
+    return result
 
 # Create a get_dealer_reviews_from_cf method to get reviews by dealer id from a cloud function
 def get_dealer_by_id_from_cf(url, dealerId):

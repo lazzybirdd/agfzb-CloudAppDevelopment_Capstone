@@ -112,6 +112,10 @@ def api_get_reviews(request):
         result = restapis.get_reviews(params)
         return HttpResponse(str(result), content_type="application/json")
 
+    if request.method == "POST":
+        result = restapis.post_review(params, request.text)
+        return HttpResponse(str(result), content_type="application/json")
+
     return []
 
 # Create a `get_dealer_details` view to render the reviews of a dealer
