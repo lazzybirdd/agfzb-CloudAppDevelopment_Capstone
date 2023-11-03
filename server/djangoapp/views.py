@@ -119,10 +119,16 @@ def api_get_reviews(request):
     return []
 
 # Create a `get_dealer_details` view to render the reviews of a dealer
-# def get_dealer_details(request, dealer_id):
-# ...
+def get_dealer_details(request, dealer_id):
+    result = restapis.get_reviews({"dealerId": dealer_id})
+    return HttpResponse(str(result), content_type="application/json")
+
 
 # Create a `add_review` view to submit a review
-# def add_review(request, dealer_id):
-# ...
+def add_review(request, dealer_id):
+    result = restapis.post_review({"dealerId": dealer_id}, request.text)
+    return HttpResponse(str(result), content_type="application/json")
 
+def sentiment_analysis(request):
+    result = restapis.analyze_review_sentiments(request.GET.get("text", default=""))
+    return HttpResponse(str(result), content_type="application/json")

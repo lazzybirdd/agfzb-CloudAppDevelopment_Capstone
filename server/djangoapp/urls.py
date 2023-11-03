@@ -24,12 +24,13 @@ urlpatterns = [
     # path for logout
     path(route='logout_request', view=views.logout_request, name='logout_request'),
 
+    # landing page
     path(route='', view=views.get_dealerships, name='index'),
     path(route='', view=views.get_dealerships, name='get_dealerships'),
 
+    #back-end API calls
     path(route='api/dealership', view=views.api_get_dealerships, name='api_get_dealerships'),
-    path(route='api/review', view=views.api_get_reviews, name='api_get_reviews'),
-    # path for dealer reviews view
-    # path for add a review view
+    path(route='api/review', view=views.api_get_reviews),
+    path(route='api/sentiment_analysis', view=views.sentiment_analysis),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
