@@ -12,6 +12,20 @@
     <!--Add a nav bar here -->
 
     <!-- Add reviews as cards -->
+    <h1>Customer Reviews for <b>{{dealer.short_name}} - {{dealer.full_name}}</b><h1>
+    </br>
+    <div class="card-columns">
+        {% for item in review_list %}        
+        <div class="card">
+            <h5>{{item.car_make}}, {{item.car_model}}<h5>
+            {{item.car_year}}
+            <br/>
+            {{item.sentiment_label}}
+            <br/>
+            {{item.review}}
+        </div>
+        {% endfor %}        
+    </div>    
 
     </body>
 

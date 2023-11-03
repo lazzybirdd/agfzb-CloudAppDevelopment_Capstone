@@ -53,9 +53,12 @@ def get_dealers_from_cf(params):
                 "address": d["address"], \
                 "zip": d["zip"], \
                 "lat": d["lat"], \
-                "long": d["long"] \
+                "long": d["long"], \
+                "short_name": d["short_name"], \
             }
-            formatted_result.append(dealer)
+            dealer["full_name"] = d.get("full_name", "")
+
+            #formatted_result.append(dealer)
 
             carDealer = CarDealer()
             carDealer.id = dealer["id"]
@@ -66,8 +69,10 @@ def get_dealers_from_cf(params):
             carDealer.zip = dealer["zip"]
             carDealer.lat = dealer["lat"]
             carDealer.long = dealer["long"]
+            carDealer.short_name = dealer["short_name"]
+            carDealer.full_name = dealer["full_name"]
+            formatted_result.append(carDealer)
 
-            #formatted_result.append(carDealer)
     #print(len(result))
     return formatted_result
 
@@ -77,7 +82,7 @@ def get_dealers_from_cf(params):
 # - Parse JSON results into a DealerView object list
 #RB we do not need get_dealer_by_id_from_cf as we are reusing get_reviews to get filtered data
 #def get_dealer_by_id_from_cf(url, dealerId):
-def get_reviews(params):
+def get_dealer_reviews_from_cf(params):
     result = get_request(url=URL_GET_REVIEWS, params=params)
 
     #print(result)
@@ -133,6 +138,8 @@ def get_reviews(params):
                 #carDealer.zip = dealer["zip"]
                 #carDealer.lat = dealer["lat"]
                 #carDealer.long = dealer["long"]
+                #carDealer.short_name = dealer["short_name"]
+                #carDealer.full_name = dealer["full_name"]
 
             dealerReview.dealership = carDealer
             dealerReview.review = review["review"]

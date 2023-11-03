@@ -25,16 +25,18 @@ class CarMakeAdmin(admin.ModelAdmin):
 
 class CarDealerAdmin(admin.ModelAdmin):
 
-    list_display = ["city", "st", "address", "zip"]
+    list_display = ["short_name", "full_name", "city", "st", "address", "zip"]
+    #list_display = ["short_name", "city", "st", "address", "zip"]
 
 class DealerReviewAdmin(admin.ModelAdmin):
 
-    def is_purchased(self):
-        if self.puchased == True:
-            return True
-        return False
+    #def is_purchased(self):
+    #    if self.puchase == True:
+    #        return True
+    #    return False
 
-    list_display = ["name", "review", "purchase_date", "is_purchased"]
+    #list_display = ["name", "review", "purchase_date", "is_purchased"]
+    list_display = ["name", "review", "purchase_date", "purchase"]
 
 
 # Register models here

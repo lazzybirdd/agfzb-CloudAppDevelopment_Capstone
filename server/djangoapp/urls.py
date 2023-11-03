@@ -25,8 +25,10 @@ urlpatterns = [
     path(route='logout_request', view=views.logout_request, name='logout_request'),
 
     # landing page
-    path(route='', view=views.get_dealerships, name='index'),
+    #path(route='', view=views.get_dealerships, name='index'),
     path(route='', view=views.get_dealerships, name='get_dealerships'),
+
+    path(route='dealer_details/<int:dealerId>', view=views.dealer_details, name='dealer_details'),
 
     #back-end API calls
     path(route='api/dealership', view=views.api_get_dealerships, name='api_get_dealerships'),

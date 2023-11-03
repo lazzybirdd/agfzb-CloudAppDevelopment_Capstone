@@ -44,10 +44,13 @@ class CarDealer(models.Model):
     lat = models.FloatField()
     long = models.FloatField()
 
+    full_name = models.CharField(max_length=100, default="", null=True)
+    #long_name = models.CharField(max_length=100)
+    short_name = models.CharField(max_length=32)
+
     def __str__(self):
         return str(self.id) \
-            + " " + self.city \
-            + " " + self.st
+            + " " + self.short_name
 
 # <HINT> Create a Car Model model `class CarModel(models.Model):`:
 # - Many-To-One relationship to Car Make model (One Car Make has many Car Models, using ForeignKey field)

@@ -10,6 +10,7 @@ from datetime import datetime
 import logging
 import json
 from . import restapis
+from . models import CarModel, CarMake, CarDealer, DealerReview
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -95,6 +96,13 @@ def registration_request(request):
 # Update the `get_dealerships` view to render the index page with a list of dealerships
 def get_dealerships(request):
     context = {}
+    dealership_list = api_get_dealerships(request)
+    context["dealership_list"] = dealership_list
+
+    print(len(dealership_list))
+    print(type(dealership_list[0]))
+    print(dealership_list[0].short_name)
+
     if request.method == "GET":
         return render(request, 'djangoapp/index.html', context)
 
@@ -102,14 +110,15 @@ def api_get_dealerships(request):
     if request.method == "GET":
         params = {"state": request.GET.get("state", default="")}
         result = restapis.get_dealers_from_cf(params)
-        return HttpResponse(str(result), content_type="application/json")
+        #return HttpResponse(result, content_type="application/json")
+        return result
 
     return []
 
 def api_get_reviews(request):
     if request.method == "GET":
         params = {"dealerId": request.GET.get("dealerId", default="")}
-        result = restapis.get_reviews(params)
+        result = restapis.get_dealer_reviews_from_cf(params)
         return HttpResponse(str(result), content_type="application/json")
 
     if request.method == "POST":
@@ -120,9 +129,29 @@ def api_get_reviews(request):
 
 # Create a `get_dealer_details` view to render the reviews of a dealer
 def get_dealer_details(request, dealer_id):
-    result = restapis.get_reviews({"dealerId": dealer_id})
+    result = restapis.get_dealer_reviews_from_cf ({"dealerId": dealer_id})
     return HttpResponse(str(result), content_type="application/json")
 
+# Create a `get_dealer_details` view to render the reviews of a dealer
+def dealer_details(request, dealerId):
+    context={}
+    print(f"dealerId={dealerId}")
+    result = restapis.get_dealer_reviews_from_cf({"dealerId": dealerId})
+    #return HttpResponse(str(result), content_type="application/json")
+
+    print(f"reviews count: {len(result)}")
+    #print(result)
+    context["review_list"] = result
+
+    dealers = CarDealer.objects.filter(id=dealerId)
+    print(f"dealers count: {len(dealers)}")
+    if len(dealers) == 0:
+        allDealers = restapis.get_dealers_from_cf({})
+        dealers = [ x for x in allDealers if str(x.id) == str(dealerId)]
+
+    print(f"updated dealers count: {len(dealers)}")
+    context["dealer"] = dealers[0]
+    return render(request, 'djangoapp/dealer_details.html', context)
 
 # Create a `add_review` view to submit a review
 def add_review(request, dealer_id):
