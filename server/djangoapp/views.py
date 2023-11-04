@@ -154,9 +154,9 @@ def dealer_details(request, dealerId):
     return render(request, 'djangoapp/dealer_details.html', context)
 
 # Create a `add_review` view to submit a review
-def add_review(request, dealer_id):
-    result = restapis.post_review({"dealerId": dealer_id}, request.text)
-    return HttpResponse(str(result), content_type="application/json")
+def add_review(request):
+    context={}
+    return render(request, 'djangoapp/add_review.html', context)
 
 def sentiment_analysis(request):
     result = restapis.analyze_review_sentiments(request.GET.get("text", default=""))
