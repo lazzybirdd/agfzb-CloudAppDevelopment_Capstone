@@ -2,7 +2,6 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
-# from .models import related models
 # from .restapis import related methods
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
@@ -10,7 +9,7 @@ from datetime import datetime
 import logging
 import json
 from . import restapis
-from . models import CarModel, CarMake, CarDealer, DealerReview
+from .models import CarModel, CarMake, CarDealer, DealerReview
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -148,15 +147,87 @@ def dealer_details(request, dealerId):
     if len(dealers) == 0:
         allDealers = restapis.get_dealers_from_cf({})
         dealers = [ x for x in allDealers if str(x.id) == str(dealerId)]
-
     print(f"updated dealers count: {len(dealers)}")
     context["dealer"] = dealers[0]
+
     return render(request, 'djangoapp/dealer_details.html', context)
 
 # Create a `add_review` view to submit a review
-def add_review(request):
-    context={}
-    return render(request, 'djangoapp/add_review.html', context)
+def add_review(request, dealerId):
+
+    #print("add_review: " + request.method)
+    context={"dealerId": dealerId}
+
+    dealers = CarDealer.objects.filter(id=dealerId)
+    print(f"dealers count: {len(dealers)}")
+    if len(dealers) == 0:
+        allDealers = restapis.get_dealers_from_cf({})
+        dealers = [ x for x in allDealers if str(x.id) == str(dealerId)]
+    print(f"updated dealers count: {len(dealers)}")
+    context["dealer"] = dealers[0]
+
+    #show only cars sold at that dealership
+    carModels = CarModel.objects.filter(dealership=dealerId)
+    context["carModels"]=carModels
+
+    if (dealerId is None):
+        raise Exception("The dealerId is missing")
+
+    if request.method == "GET":
+        return render(request, "djangoapp/add_review.html", context)
+
+    if request.method == "POST":
+
+        reviewText = request.POST.get("content", default="")
+        if len(reviewText) == 0:
+            raise Exception("Reeview text is missing")
+
+        carModelId = request.POST.get("car", default="")
+        if len(carModelId) == 0:
+            raise Exception("car model id is missing")
+
+        car = CarModel.objects.filter(id=carModelId)[0]
+
+        payload = { \
+            "review": { \
+                "name": request.user.first_name + " " + request.user.last_name, \
+                "review": reviewText, \
+                "car_make": car.car_make.name, \
+                "car_model": car.name, \
+                #"car_year": car.year.strftime("%Y"), \
+                # we are using integer field, not date
+                "car_year": car.year, \
+                "dealership": car.dealership.id, \
+                #for simplicity let's hardcode id of review for now
+                #in reality after DealerReview object created, it has to autoincrement the id
+                "id": 1114, \
+            } \
+        }
+
+        isPurchasedStr = request.POST.get("purchasecheck", default="off")
+        if isPurchasedStr == "on":
+
+            purchaseDateStr = request.POST.get("purchasedate", default="1/1/1970")
+            if len(purchaseDateStr) == 0:
+                raise Exception("car purchase date is missing")
+
+            payload["review"]["purchase"] = True
+            payload["review"]["purchase_date"] = purchaseDateStr
+        else:
+            payload["review"]["purchase"] = False
+
+        #for debugging purposes, we are going to show payload on final page
+        #context["p"] = json.dumps(payload)
+        print(f"payload:{json.dumps(payload)}")
+
+        result = restapis.post_review(payload)
+        print(f"result:{result}")
+
+        if result != 200:
+            raise Exception("Failed to create a review")
+
+        return render(request, "djangoapp/add_review_success.html", context)
+        #return redirect(request, "djangoapp:dealer_details/" + str(dealerId), context)
 
 def sentiment_analysis(request):
     result = restapis.analyze_review_sentiments(request.GET.get("text", default=""))

@@ -25,12 +25,12 @@ urlpatterns = [
     path(route='logout_request', view=views.logout_request, name='logout_request'),
 
     # landing page
-    #path(route='', view=views.get_dealerships, name='index'),
+    path(route='', view=views.get_dealerships, name='index'),
     path(route='', view=views.get_dealerships, name='get_dealerships'),
 
     #extra pages
     path(route='dealer_details/<int:dealerId>', view=views.dealer_details, name='dealer_details'),
-    path(route='add_review', view=views.add_review, name='add_review'),
+    path(route='add_review/<int:dealerId>', view=views.add_review, name='add_review'),
 
     #back-end API calls
     path(route='api/dealership', view=views.api_get_dealerships, name='api_get_dealerships'),

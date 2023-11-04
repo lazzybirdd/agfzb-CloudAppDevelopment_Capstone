@@ -5,12 +5,75 @@
     {% load static %}
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker.css" rel="stylesheet">
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+
+    <!--script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/js/bootstrap-datepicker.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
 
+            //alert("page initialized, it is a right time to connect datepicker to the date fields");
+
+            $('.date-own').datepicker({
+               format: 'mm/dd/yyyy'
+            });
+
+        })
+   </script>
+   <style>
+        .form-label {
+            font-weight: bold;
+        }
+        .form-control {
+            width: 600px;
+        }
+        .date-own {
+            text-align: left;
+            width: 150px;
+            border: 1px solid #ced4da;
+        }
+    </style>
 </head>
     <body>
     <!--Add review form here -->
+        {% if user.is_authenticated %}
+            <form name="a_new_review" method="post">                
+                <fieldset style="border:1px solid black;">
+
+                <!-- this is to solve the CSRF token missing error when form submits the POST request to the same request handler -->
+                {% csrf_token %}
+
+                <label for="content" class="form-label">Enter the review content:</label>
+                <textarea class="form-control" id="content" name="content" rows="2" required></textarea>
+
+                <br/>
+                <input type="checkbox" name="purchasecheck" id="purchasecheck" />
+                <label for="purchasecheck" class="form-label">Has purchased the car from dealer {{ dealer.full_name }}</label>
+
+                <br/>
+                <label for="car" class="form-label">Select your car (model-make-year):</label>
+                <select name="car" id="car" class="form-select" required>
+                    {% for car in carModels %}
+                        <option selected value={{car.id}}>{{car.name}}-{{car.car_make.name}}-{{ car.year }}</option>
+                    {% endfor %}
+               </select>
+               
+               <br/>
+               <label for="purchasedate" class="form-label">Select your purchase date:</label>
+               <br/>
+               <input class="date-own form-control btn" type="text" name="purchasedate" id="purchasedate" />
+               <br/>
+               <br/>
+               </fieldset>
+
+               <br/>
+               <input class="btn btn-primary" style="color:white;" href="{% url 'djangoapp:add_review' dealerId %}" value="Submit" type="submit">
+            </form>
+            {% else %}
+            <div>To submit a new review you have to be logged in!</div>
+        {% endif %}
     </body>
 </html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% load static %}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker.css" rel="stylesheet">
+
+    <!--script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/js/bootstrap-datepicker.min.js"></script>
+
+</head>
+    <body>
+    <!--Add review form here -->
+    Thank you for submitting your review. You opinion is very valuable for us.
+    {{ p }}
+    <br/>
+    To get back to the the list of all reviews of that dealership please click on this link: 
+    <a class="btn btn-link" href="{% url 'djangoapp:dealer_details' dealerId %}">go back to reviews</a>
+    <br/>
+    To get back to the main page with all dealerships list please click on this link: 
+    <a class="btn btn-link" href="{% url 'djangoapp:get_dealerships' %}">go back to all dealerships</a>
+
+    </body>
+</html>
